@@ -6,11 +6,6 @@
 
 static const char TABLE[64] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
 
-#define I1(c0)      (uint32_t)(c0)>>2
-#define I2(c0, c1) ((uint32_t)(c0)&0x03)<<4 | (((uint32_t)(c1)>>4)&0x0F)
-#define I3(c1, c2) ((uint32_t)(c1)&0x0F)<<2 | (((uint32_t)(c2)>>6)&0x0F)
-#define I4(c2)      (uint32_t)(c2)&0x3F
-
 #define NEXT_MULT_OF(v, of) (v) + ((of) - (v) % (of))
 
 size_t pre_calc_len(size_t n, size_t* padding) {
