@@ -29,23 +29,23 @@ char* b64(const char* str, size_t strl) {
         strl = NEXT_MULT_OF(strl, 4);
     }
 
-    char *padded_str = calloc(strl, sizeof(char));
-    assert(padded_str != NULL);
-    assert(memcpy(padded_str, str, strl) != NULL);
+    char padded_str[strl];
+    memcpy(padded_str, str, strl);
 
     char* r = malloc(pre_computed_len + 1);
-    assert(r != NULL);
+    assert(r != NULL && "buy more ram lol");
 
-    unsigned char c0, c1, c2;
-    size_t cnt = 0;
-    for (size_t i = 0; i < strl; i += 3) {
-        c0 = padded_str[i + 0];
-        c1 = padded_str[i + 1];
-        c2 = padded_str[i + 2];
-        r[cnt++] = TABLE[(uint32_t)c0>>2];
-        r[cnt++] = TABLE[((uint32_t)c0&0x03)<<4 | (((uint32_t)c1>>4)&0x0F)];
-        r[cnt++] = TABLE[((uint32_t)c1&0x0F)<<2 | (((uint32_t)c2>>6)&0x0F)];
-        r[cnt++] = TABLE[(uint32_t)c2&0x3F];
+    uint32_t i0, i1, i2, i3;
+    for (size_t i = 0, cnt = 0; i < strl; i += 3, cnt += 4) {
+        i0 = padded_str[i] >> 2;
+        i1 = (padded_str[i] & 0x03) << 4 | (padded_str[i + 1] >> 4 & 0x0F);
+        i2 = (padded_str[i + 1] & 0x0F) << 2 | (padded_str[i + 2] >> 6 & 0x0F);
+        i3 = padded_str[i + 2] & 0x3F;
+
+        r[cnt + 0] = TABLE[i0];
+        r[cnt + 1] = TABLE[i1];
+        r[cnt + 2] = TABLE[i2];
+        r[cnt + 3] = TABLE[i3];
     }
 
     for (size_t i = pre_computed_len - padding; i < pre_computed_len; i++) {
@@ -53,12 +53,11 @@ char* b64(const char* str, size_t strl) {
     }
 
     r[pre_computed_len] = '\0';
-    free(padded_str);
     return r;
 }
 
 int main(void) {
-    const char *m = "M";
+    const char *m = "Man";
     char *str_b64 = b64(m, strlen(m));
     printf("%s\n", str_b64);
     return 0;
