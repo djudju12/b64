@@ -26,7 +26,7 @@ char* b64(const char* str, size_t strl) {
     size_t pre_computed_len = pre_calc_len(strl, &padding);
 
     if (strl % 3 != 0) {
-        strl = NEXT_MULT_OF(strl, 4);
+        strl = NEXT_MULT_OF(strl, 3);
     }
 
     char padded_str[strl];
@@ -57,7 +57,7 @@ char* b64(const char* str, size_t strl) {
 }
 
 int main(void) {
-    const char *m = "Man";
+    const char *m = "M";
     char *str_b64 = b64(m, strlen(m));
     printf("%s\n", str_b64);
     return 0;
